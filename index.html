@@ -23,8 +23,19 @@
     <canvas Id="MyCanvas" width="480" height="320"></canvas>
 
     <script>
+        
+        // TODO: ECMAScript2015 zezwala na używanie słów kluczowych let i const
+        // dla wartości, które nie będą się zmieniać, używaj const, dla zmieniających się let
+        // nie używaj 'var' w ogóle
         var canvas = document.getElementById("MyCanvas");
         var ctx = canvas.getContext("2d");
+        // TODO: x i y to niezbyt sugestywne nazwy zmiennych - czego to są współrzędne? Domyślam się, że piłki,
+        // ale nie powinienem się domyślać
+        // TODO: po drugie, widzę że zmienne x i y są zadeklarowane globalnie i modyfikowane w trakcie. Globalne
+        // zmienne to zła praktyka, nie dają Ci kontroli nad tym, w jakim są stanie, są modyfikowane byle gdzie i byle jak.
+        // Ogólnie zawsze najlepiej, jeśli jak najmniejsza część kodu może modyfikować zmienne. To powinny być zmienne
+        // lokalne (prawdopodobnie w funkcji draw()) i powinny być przekazywane jako argumenty do funkcji, które z nich
+        // korzystają, a są wywoływane z draw(). 
         var x = canvas.width / 2;
         var y = canvas.height - 30;
         var dx = 2;
@@ -43,6 +54,8 @@
         var brickOffsetTop = 30;
         var brickOffsetLeft = 30;
         var bricks = [];
+
+        //TODO: To wygląda jak inicjalizacja warunków gry, wynieś to do jakiejś funkcji
         for (var c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (var r = 0; r < brickRowCount; r++) {
@@ -71,6 +84,9 @@
         function drawBall() {
             ctx.beginPath();
             ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            // TODO: Tej wartości używasz przynajmniej w 2 miejscach, powinna to być stała zadeklarowana tak jak reszta - 
+            // zresztą nawet gdybyś używał jej raz, ale chciał np zmienić ten kolor, lepiej mieć to w ustalonym miejscu, a nie
+            // szukać
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
@@ -104,6 +120,8 @@
             }
         }
 
+        // TODO: Ta funkcja jest zbyt skomplikowana, jest w niej za dużo logiki. Wynieś poszczególne kawałki do mniejszych 
+        // funkcji i wywołuj je stąd (np. gameOver() itp)
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBricks();
@@ -129,7 +147,9 @@
                         clearInterval(interval);
                     } else {
                         x = canvas.width / 2;
+                        //TODO: magic number, co to jest 30? powinna być to stała z jakąś sugestywną nazwą
                         y = canvas.height - 30;
+                        //TODO: co to jest 2? również - stała z sugestywną nazwą
                         dx = 2;
                         dy = -2;
                         paddleX = (canvas.width - paddleWidth) / 2;
@@ -138,6 +158,7 @@
             }
 
             if (rightPressed) {
+                // TODO: magic number
                 paddleX += 7;
                 if (paddleX + paddleWidth > canvas.width) {
                     paddleX = canvas.width - paddleWidth;
@@ -155,7 +176,8 @@
 
         }
 
-
+        // TODO: Nie ma potrzeby używać flag right/leftPressed, możesz po prostu modyfikować paddleX tutaj
+        // wtedy keyUpHandler też będzie zbędny
         function keyDownHandler(e) {
             if (e.key == "Right" || e.key == "ArrowRight") {
                 rightPressed = true;
@@ -203,6 +225,8 @@
             ctx.fillStyle = "0095DD";
             ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
         }
+        
+        //TODO: zmienna 'interval', nie jest nigdzie używana, nie ma potrzeby jej deklarować
 
         var interval = setInterval(draw, 10);
 
